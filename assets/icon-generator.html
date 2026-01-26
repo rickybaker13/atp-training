@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Mountain - App Icon Generator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      background: #1a1a2e;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      color: white;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .icons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+    }
+    .icon-container {
+      text-align: center;
+    }
+    .icon-container p {
+      margin-top: 10px;
+      color: #888;
+      font-size: 14px;
+    }
+    .instructions {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      line-height: 1.6;
+    }
+    .instructions h3 {
+      color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Mountain - App Icons</h1>
+
+  <div class="instructions">
+    <h3>How to export these icons:</h3>
+    <ol>
+      <li>Open this file in Chrome/Safari</li>
+      <li>Right-click each icon and "Save Image As..."</li>
+      <li>Save to your <code>assets/</code> folder with the correct filename</li>
+      <li>For 1024x1024 icon.png, you may need to take a screenshot and resize</li>
+    </ol>
+  </div>
+
+  <div class="icons">
+    <!-- Main App Icon 1024x1024 -->
+    <div class="icon-container">
+      <svg width="256" height="256" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#0a0a0f"/>
+        <!-- Main mountain -->
+        <polygon points="512,140 920,840 104,840" fill="url(#mountainGrad)"/>
+        <!-- Shadow on right side -->
+        <polygon points="512,140 920,840 512,840" fill="rgba(0,0,0,0.2)"/>
+        <!-- Snow cap -->
+        <polygon points="512,140 600,280 424,280" fill="#ffffff" fill-opacity="0.95"/>
+        <defs>
+          <linearGradient id="mountainGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#f39c12"/>
+            <stop offset="100%" stop-color="#e67e22"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <p>icon.png (1024x1024)</p>
+    </div>
+
+    <!-- Adaptive Icon for Android -->
+    <div class="icon-container">
+      <svg width="256" height="256" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" fill="#0a0a0f"/>
+        <polygon points="512,180 880,800 144,800" fill="url(#mountainGrad2)"/>
+        <polygon points="512,180 880,800 512,800" fill="rgba(0,0,0,0.2)"/>
+        <polygon points="512,180 590,300 434,300" fill="#ffffff" fill-opacity="0.95"/>
+        <defs>
+          <linearGradient id="mountainGrad2" x1="50%" y1="0%" x2="50%" y2="100%">
+            <stop offset="0%" stop-color="#f39c12"/>
+            <stop offset="100%" stop-color="#e67e22"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <p>adaptive-icon.png (1024x1024)</p>
+    </div>
+
+    <!-- Notification Icon -->
+    <div class="icon-container">
+      <svg width="96" height="96" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg">
+        <rect width="96" height="96" fill="#0a0a0f"/>
+        <polygon points="48,14 88,82 8,82" fill="#f39c12"/>
+        <polygon points="48,14 88,82 48,82" fill="rgba(0,0,0,0.2)"/>
+        <polygon points="48,14 56,28 40,28" fill="#ffffff" fill-opacity="0.95"/>
+      </svg>
+      <p>notification-icon.png (96x96)</p>
+    </div>
+
+    <!-- Favicon -->
+    <div class="icon-container">
+      <svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <rect width="48" height="48" fill="#0a0a0f"/>
+        <polygon points="24,6 44,42 4,42" fill="#f39c12"/>
+        <polygon points="24,6 44,42 24,42" fill="rgba(0,0,0,0.2)"/>
+        <polygon points="24,6 28,14 20,14" fill="#ffffff" fill-opacity="0.95"/>
+      </svg>
+      <p>favicon.png (48x48)</p>
+    </div>
+  </div>
+
+  <!-- Splash Screen Preview -->
+  <h2 style="text-align: center; margin-top: 60px;">Splash Screen Preview</h2>
+  <div style="display: flex; justify-content: center; margin-top: 20px;">
+    <svg width="200" height="433" viewBox="0 0 1284 2778" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1284" height="2778" fill="#0a0a0f"/>
+      <!-- Mountain -->
+      <polygon points="642,1000 892,1400 392,1400" fill="url(#splashGrad)"/>
+      <polygon points="642,1000 892,1400 642,1400" fill="rgba(0,0,0,0.2)"/>
+      <polygon points="642,1000 702,1080 582,1080" fill="#ffffff" fill-opacity="0.95"/>
+      <!-- Text -->
+      <text x="642" y="1550" text-anchor="middle" fill="white" font-size="64" font-weight="bold" font-family="-apple-system, sans-serif">THE MOUNTAIN</text>
+      <text x="642" y="1620" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="32" font-family="-apple-system, sans-serif" letter-spacing="4">CLIMB EVERY DAY</text>
+      <defs>
+        <linearGradient id="splashGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+          <stop offset="0%" stop-color="#f39c12"/>
+          <stop offset="100%" stop-color="#e67e22"/>
+        </linearGradient>
+      </defs>
+    </svg>
+  </div>
+  <p style="text-align: center; color: #888;">splash.png (1284x2778)</p>
+
+</body>
+</html>
