@@ -1510,6 +1510,7 @@ export default function App() {
           <View style={styles.settingsCard} onStartShouldSetResponder={() => true}>
             <Text style={styles.settingsTitle}>Settings</Text>
 
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.settingsScroll}>
             {/* Program Start Date */}
             <TouchableOpacity
               style={styles.settingsItem}
@@ -1640,7 +1641,7 @@ export default function App() {
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => {
-                Linking.openURL('https://atptraining.com/nutrition-philosophy');
+                Linking.openURL('https://rickybaker13.github.io/atp-training/nutrition-philosophy.html');
               }}
             >
               <View style={styles.settingsItemLeft}>
@@ -1657,7 +1658,7 @@ export default function App() {
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => {
-                Linking.openURL('https://atptraining.com/privacy');
+                Linking.openURL('https://rickybaker13.github.io/atp-training/privacy.html');
               }}
             >
               <View style={styles.settingsItemLeft}>
@@ -1673,7 +1674,7 @@ export default function App() {
             <TouchableOpacity
               style={styles.settingsItem}
               onPress={() => {
-                Linking.openURL('https://atptraining.com/terms');
+                Linking.openURL('https://rickybaker13.github.io/atp-training/terms.html');
               }}
             >
               <View style={styles.settingsItemLeft}>
@@ -1691,10 +1692,11 @@ export default function App() {
                 <Text style={styles.settingsAboutIcon}>📱</Text>
                 <View style={styles.settingsItemText}>
                   <Text style={styles.settingsItemLabel}>Version</Text>
-                  <Text style={styles.settingsItemValue}>2.0.0</Text>
+                  <Text style={styles.settingsItemValue}>2.0.1</Text>
                 </View>
               </View>
             </View>
+            </ScrollView>
 
             <TouchableOpacity
               style={styles.settingsCloseBtn}
@@ -1821,8 +1823,8 @@ export default function App() {
     </View>
   );
 
-  // The Mountain - athlete tagline
-  const tagline = "CLIMB EVERY DAY";
+  // ATP - athlete tagline
+  const tagline = "ASCEND EVERY DAY";
 
   // Epic mountain background - dramatic peaks (high contrast)
   const mountainBgUrl = 'https://images.unsplash.com/photo-1454496522488-7a8e488e8606?w=1400&q=95';
@@ -1844,7 +1846,7 @@ export default function App() {
             <View style={styles.header}>
               <View style={styles.headerTop}>
                 <View style={styles.headerTitles}>
-                  <Text style={styles.title}>THE MOUNTAIN</Text>
+                  <Text style={styles.title}>ATP</Text>
                   <Text style={styles.subtitle}>{tagline}</Text>
                 </View>
                 <TouchableOpacity
@@ -3157,6 +3159,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 20,
     letterSpacing: 1,
+  },
+  settingsScroll: {
+    flexGrow: 0,
   },
   settingsSectionTitle: {
     fontSize: 12,
