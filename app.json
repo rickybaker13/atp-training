@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "The Mountain",
-    "slug": "the-mountain",
+    "name": "ATP: Ascent Training Protocol",
+    "slug": "atp-training",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,13 +16,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.themountain.training",
+      "bundleIdentifier": "com.atp.training",
       "buildNumber": "1",
       "infoPlist": {
         "UIBackgroundModes": [
           "fetch",
           "remote-notification"
-        ]
+        ],
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
@@ -30,7 +31,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0a0f"
       },
-      "package": "com.themountain.training"
+      "package": "com.atp.training"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -45,9 +46,10 @@
         }
       ]
     ],
+    "owner": "bigbear-30",
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "e7613be9-0547-47b2-8043-c575e05216cd"
       }
     }
   }

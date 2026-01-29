@@ -17,6 +17,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 import { LinearGradient } from 'expo-linear-gradient';
 
+// Import new v2.0 components
+import { CoachBot, TeamManager, Leaderboard, FeatureButtons } from './src/components';
+import { supabaseService } from './src/services';
+import { Team, GeneratedTrainingPlan } from './src/types';
+
 // Custom Icon Components - Clean geometric style using Views
 const IconPeak = ({ size = 28, color = '#f39c12' }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
@@ -137,6 +142,27 @@ const IconRecovery = ({ size = 28, color = '#4a6fa5' }: { size?: number; color?:
   </View>
 );
 
+const IconSettings = ({ size = 28, color = '#a0aab4' }: { size?: number; color?: string }) => (
+  <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
+    <View style={{
+      width: size * 0.7,
+      height: size * 0.7,
+      borderRadius: size * 0.35,
+      borderWidth: 2.5,
+      borderColor: color,
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <View style={{ width: size * 0.2, height: size * 0.2, borderRadius: size * 0.1, backgroundColor: color }} />
+    </View>
+    {/* Gear teeth */}
+    <View style={{ position: 'absolute', top: 0, width: size * 0.15, height: size * 0.2, backgroundColor: color }} />
+    <View style={{ position: 'absolute', bottom: 0, width: size * 0.15, height: size * 0.2, backgroundColor: color }} />
+    <View style={{ position: 'absolute', left: 0, width: size * 0.2, height: size * 0.15, backgroundColor: color }} />
+    <View style={{ position: 'absolute', right: 0, width: size * 0.2, height: size * 0.15, backgroundColor: color }} />
+  </View>
+);
+
 // Import our training data
 import {
   phases,
@@ -156,6 +182,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -224,6 +252,23 @@ export default function App() {
   const [workoutSessionExercises, setWorkoutSessionExercises] = useState(0);
   const [showDayDetail, setShowDayDetail] = useState(false);
   const [selectedDayDate, setSelectedDayDate] = useState<Date | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+
+  // v2.0 Feature States
+  const [showCoachBot, setShowCoachBot] = useState(false);
+  const [coachBotPlanType, setCoachBotPlanType] = useState<'training' | 'nutrition'>('training');
+  const [showTeamManager, setShowTeamManager] = useState(false);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
+  const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+  const [hasCustomPlan, setHasCustomPlan] = useState(false);
+  const [hasNutritionPlan, setHasNutritionPlan] = useState(false);
+  const [apiKey, setApiKey] = useState<string>('');
+  const [userSports, setUserSports] = useState<string[]>([]);
+
+  // Check if user plays baseball (for showing pitching-specific content)
+  const isBaseballPlayer = userSports.some(sport =>
+    sport.toLowerCase().includes('baseball') || sport.toLowerCase().includes('softball')
+  );
 
   // Get the program start date (from user settings or default)
   const getProgramStartDate = (): Date => {
@@ -237,6 +282,7 @@ export default function App() {
   useEffect(() => {
     loadProgress();
     setupNotifications();
+    loadV2Features();
   }, []);
 
   // Update current phase when progress changes (specifically when start date changes)
@@ -244,6 +290,50 @@ export default function App() {
     const startDate = getProgramStartDate();
     setCurrentPhase(getCurrentPhase(startDate));
   }, [progress.programStartDate]);
+
+  // Load v2.0 features (team, API key, etc.)
+  const loadV2Features = async () => {
+    try {
+      // Load API key
+      const savedApiKey = await AsyncStorage.getItem('mountain_openrouter_api_key');
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+      }
+
+      // Check for custom plan and load user sports
+      const savedPlan = await AsyncStorage.getItem('mountain_generated_plan');
+      if (savedPlan) {
+        setHasCustomPlan(true);
+        try {
+          const planData = JSON.parse(savedPlan);
+          // Get sports from plan - could be in sports array or userInputs.sport
+          const sports = planData.sports ||
+            (planData.userInputs?.sport
+              ? (Array.isArray(planData.userInputs.sport) ? planData.userInputs.sport : [planData.userInputs.sport])
+              : []);
+          if (sports.length > 0) {
+            setUserSports(sports);
+          }
+        } catch (e) {
+          console.log('Error parsing plan for sports:', e);
+        }
+      }
+
+      // Check for nutrition plan
+      const savedNutritionPlan = await AsyncStorage.getItem('mountain_nutrition_plan');
+      if (savedNutritionPlan) {
+        setHasNutritionPlan(true);
+      }
+
+      // Initialize Supabase and load team
+      // Note: Replace with your actual Supabase credentials
+      // supabaseService.initialize('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+      const team = await supabaseService.getCurrentTeam();
+      setCurrentTeam(team);
+    } catch (e) {
+      console.log('Error loading v2 features:', e);
+    }
+  };
 
   const loadProgress = async () => {
     try {
@@ -275,6 +365,58 @@ export default function App() {
     }
   };
 
+  // Reset functions for Settings
+  const resetPoints = () => {
+    saveProgress({
+      ...progress,
+      totalPoints: 0,
+      dailyPoints: {},
+    });
+  };
+
+  const resetStreak = () => {
+    saveProgress({
+      ...progress,
+      currentStreak: 0,
+      longestStreak: 0,
+      lastWorkoutDate: null,
+    });
+  };
+
+  const resetSessions = () => {
+    saveProgress({
+      ...progress,
+      workoutsCompleted: 0,
+      completedWorkouts: [],
+      completedExerciseIds: [],
+      weeklyWorkouts: 0,
+    });
+  };
+
+  const resetPitchingData = () => {
+    saveProgress({
+      ...progress,
+      scheduledPitchingDays: [],
+      pitchHistory: [],
+    });
+  };
+
+  const resetMilestones = () => {
+    saveProgress({
+      ...progress,
+      completedMilestones: [],
+    });
+  };
+
+  const resetAllData = async () => {
+    try {
+      await AsyncStorage.removeItem('joboo_progress');
+      setProgress(defaultProgress);
+    } catch (e) {
+      console.log('Error resetting data:', e);
+    }
+  };
+
   const setupNotifications = async () => {
     const { status } = await Notifications.requestPermissionsAsync();
     if (status !== 'granted') {
@@ -290,9 +432,9 @@ export default function App() {
         sound: true,
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: 16,
         minute: 0,
-        repeats: true,
       },
     });
   };
@@ -1352,7 +1494,224 @@ export default function App() {
     );
   };
 
+  const renderSettingsModal = () => {
+    const startDate = progress.programStartDate ? new Date(progress.programStartDate) : null;
+    const startDateText = startDate
+      ? startDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+      : 'Not set';
+
+    return (
+      <Modal visible={showSettings} transparent animationType="fade">
+        <TouchableOpacity
+          style={styles.settingsOverlay}
+          activeOpacity={1}
+          onPress={() => setShowSettings(false)}
+        >
+          <View style={styles.settingsCard} onStartShouldSetResponder={() => true}>
+            <Text style={styles.settingsTitle}>Settings</Text>
+
+            {/* Program Start Date */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                setShowSettings(false);
+                setStartDateMonth(new Date());
+                setShowStartDatePicker(true);
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconCalendar size={22} color="#f39c12" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Program Start Date</Text>
+                  <Text style={styles.settingsItemValue}>{startDateText}</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsItemArrow}>›</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.settingsSectionTitle}>Reset Data</Text>
+
+            {/* Reset Points */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                resetPoints();
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconPeak size={22} color="#f39c12" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Reset Points</Text>
+                  <Text style={styles.settingsItemValue}>Current: {progress.totalPoints} pts</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsResetBtn}>Reset</Text>
+            </TouchableOpacity>
+
+            {/* Reset Streak */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                resetStreak();
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconFlame size={22} color="#e74c3c" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Reset Streak</Text>
+                  <Text style={styles.settingsItemValue}>Current: {progress.currentStreak} days</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsResetBtn}>Reset</Text>
+            </TouchableOpacity>
+
+            {/* Reset Sessions */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                resetSessions();
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconDumbbell size={22} color="#4a6fa5" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Reset Sessions</Text>
+                  <Text style={styles.settingsItemValue}>Current: {progress.workoutsCompleted} sessions</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsResetBtn}>Reset</Text>
+            </TouchableOpacity>
+
+            {/* Reset Pitching Data */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                resetPitchingData();
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconBaseball size={22} color="#e8f4f8" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Reset Pitching Data</Text>
+                  <Text style={styles.settingsItemValue}>{progress.scheduledPitchingDays.length} scheduled days</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsResetBtn}>Reset</Text>
+            </TouchableOpacity>
+
+            {/* Reset Milestones */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                resetMilestones();
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <IconStats size={22} color="#2ecc71" />
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Reset Milestones</Text>
+                  <Text style={styles.settingsItemValue}>{progress.completedMilestones.length} earned</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsResetBtn}>Reset</Text>
+            </TouchableOpacity>
+
+            {/* Reset All Data */}
+            <TouchableOpacity
+              style={[styles.settingsItem, styles.settingsDangerItem]}
+              onPress={() => {
+                resetAllData();
+                setShowSettings(false);
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <Text style={styles.settingsDangerIcon}>⚠️</Text>
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsDangerLabel}>Reset All Data</Text>
+                  <Text style={styles.settingsDangerValue}>Start completely fresh</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsDangerBtn}>Reset All</Text>
+            </TouchableOpacity>
+
+            <Text style={styles.settingsSectionTitle}>About ATP</Text>
+
+            {/* Our Nutrition Philosophy */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                Linking.openURL('https://atptraining.com/nutrition-philosophy');
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <Text style={styles.settingsAboutIcon}>🥗</Text>
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Our Nutrition Philosophy</Text>
+                  <Text style={styles.settingsItemValue}>Youth-focused, no restriction</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsItemArrow}>›</Text>
+            </TouchableOpacity>
+
+            {/* Privacy Policy */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                Linking.openURL('https://atptraining.com/privacy');
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <Text style={styles.settingsAboutIcon}>🔒</Text>
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Privacy Policy</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsItemArrow}>›</Text>
+            </TouchableOpacity>
+
+            {/* Terms of Service */}
+            <TouchableOpacity
+              style={styles.settingsItem}
+              onPress={() => {
+                Linking.openURL('https://atptraining.com/terms');
+              }}
+            >
+              <View style={styles.settingsItemLeft}>
+                <Text style={styles.settingsAboutIcon}>📄</Text>
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Terms of Service</Text>
+                </View>
+              </View>
+              <Text style={styles.settingsItemArrow}>›</Text>
+            </TouchableOpacity>
+
+            {/* App Version */}
+            <View style={styles.settingsItem}>
+              <View style={styles.settingsItemLeft}>
+                <Text style={styles.settingsAboutIcon}>📱</Text>
+                <View style={styles.settingsItemText}>
+                  <Text style={styles.settingsItemLabel}>Version</Text>
+                  <Text style={styles.settingsItemValue}>2.0.0</Text>
+                </View>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.settingsCloseBtn}
+              onPress={() => setShowSettings(false)}
+            >
+              <Text style={styles.settingsCloseBtnText}>Done</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+
   const renderPitchAlerts = () => {
+    // Only show pitch alerts for baseball/softball players
+    if (!isBaseballPlayer) return null;
+
     const recommendations = getWorkoutRecommendations();
     if (recommendations.length === 0) return null;
 
@@ -1380,7 +1739,11 @@ export default function App() {
     );
   };
 
-  const renderPitchManagement = () => (
+  const renderPitchManagement = () => {
+    // Only show pitching management for baseball/softball players
+    if (!isBaseballPlayer) return null;
+
+    return (
     <View style={styles.pitchManagement}>
       <Text style={styles.sectionTitle}>PITCHING</Text>
       <View style={styles.pitchCards}>
@@ -1411,7 +1774,8 @@ export default function App() {
         </View>
       </View>
     </View>
-  );
+    );
+  };
 
   const renderQuickActions = () => (
     <View style={styles.quickActions}>
@@ -1478,8 +1842,18 @@ export default function App() {
           <ScrollView showsVerticalScrollIndicator={false}>
             {/* Header */}
             <View style={styles.header}>
-              <Text style={styles.title}>THE MOUNTAIN</Text>
-              <Text style={styles.subtitle}>{tagline}</Text>
+              <View style={styles.headerTop}>
+                <View style={styles.headerTitles}>
+                  <Text style={styles.title}>THE MOUNTAIN</Text>
+                  <Text style={styles.subtitle}>{tagline}</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.settingsButton}
+                  onPress={() => setShowSettings(true)}
+                >
+                  <IconSettings size={26} color="#a0aab4" />
+                </TouchableOpacity>
+              </View>
             </View>
 
           {/* Stats */}
@@ -1494,6 +1868,23 @@ export default function App() {
           {/* Pitch Alerts */}
           {renderPitchAlerts()}
 
+          {/* v2.0 Feature Buttons */}
+          <FeatureButtons
+            onTeamPress={() => setShowTeamManager(true)}
+            onLeaderboardPress={() => setShowLeaderboard(true)}
+            onTrainingPlanPress={() => {
+              setCoachBotPlanType('training');
+              setShowCoachBot(true);
+            }}
+            onNutritionPlanPress={() => {
+              setCoachBotPlanType('nutrition');
+              setShowCoachBot(true);
+            }}
+            hasTeam={currentTeam !== null}
+            hasCustomPlan={hasCustomPlan}
+            hasNutritionPlan={hasNutritionPlan}
+          />
+
           {/* Today's Workout */}
           {renderTodayWorkout()}
 
@@ -1504,12 +1895,14 @@ export default function App() {
           <Text style={styles.sectionTitle}>QUICK SESSIONS</Text>
           {renderQuickActions()}
 
-          {/* Pitch Count Rules */}
-          <View style={styles.rulesCard}>
-            <Text style={styles.rulesTitle}>ARM CARE LIMITS</Text>
-            <Text style={styles.ruleText}>Max: {pitchCountRules.maxPerGame}/game • {pitchCountRules.maxPerWeek}/week</Text>
-            <Text style={styles.warningText}>⚠️ {pitchCountRules.warnings[0]}</Text>
-          </View>
+          {/* Pitch Count Rules - Only for baseball/softball players */}
+          {isBaseballPlayer && (
+            <View style={styles.rulesCard}>
+              <Text style={styles.rulesTitle}>ARM CARE LIMITS</Text>
+              <Text style={styles.ruleText}>Max: {pitchCountRules.maxPerGame}/game • {pitchCountRules.maxPerWeek}/week</Text>
+              <Text style={styles.warningText}>⚠️ {pitchCountRules.warnings[0]}</Text>
+            </View>
+          )}
         </ScrollView>
 
           {/* Modals - order matters for z-index */}
@@ -1519,8 +1912,59 @@ export default function App() {
           {renderStartDatePickerModal()}
           {renderDayDetailModal()}
           {renderWorkoutSummaryModal()}
+          {renderSettingsModal()}
           {/* Exercise detail must be LAST to appear on top */}
           {renderExerciseDetailModal()}
+
+          {/* v2.0 Feature Modals */}
+          <Modal visible={showCoachBot} animationType="slide">
+            <CoachBot
+              planType={coachBotPlanType}
+              apiKey={apiKey}
+              onComplete={async (plan, nutritionPlan) => {
+                if (coachBotPlanType === 'training') {
+                  setHasCustomPlan(true);
+                  // Save training plan
+                  await AsyncStorage.setItem('mountain_generated_plan', JSON.stringify(plan));
+
+                  // Update user sports from the plan
+                  const sports = plan.sports ||
+                    (plan.userInputs?.sport
+                      ? (Array.isArray(plan.userInputs.sport) ? plan.userInputs.sport : [plan.userInputs.sport])
+                      : []);
+                  if (sports.length > 0) {
+                    setUserSports(sports);
+                  }
+
+                  if (nutritionPlan) {
+                    setHasNutritionPlan(true);
+                    await AsyncStorage.setItem('mountain_nutrition_plan', JSON.stringify(nutritionPlan));
+                  }
+                } else {
+                  setHasNutritionPlan(true);
+                  // Save nutrition plan
+                  await AsyncStorage.setItem('mountain_nutrition_plan', JSON.stringify(plan));
+                }
+                setShowCoachBot(false);
+                console.log('Plan generated:', plan, nutritionPlan);
+              }}
+              onClose={() => setShowCoachBot(false)}
+            />
+          </Modal>
+
+          <Modal visible={showTeamManager} animationType="slide">
+            <TeamManager
+              onClose={() => setShowTeamManager(false)}
+              onTeamJoined={(team) => setCurrentTeam(team)}
+            />
+          </Modal>
+
+          <Modal visible={showLeaderboard} animationType="slide">
+            <Leaderboard
+              onClose={() => setShowLeaderboard(false)}
+              currentUserId={undefined} // TODO: Get from Supabase user
+            />
+          </Modal>
         </LinearGradient>
       </ImageBackground>
     </SafeAreaView>
@@ -1546,6 +1990,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 10,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  headerTitles: {
+    flex: 1,
+  },
+  settingsButton: {
+    padding: 8,
+    marginTop: -4,
   },
   title: {
     fontSize: 28,
@@ -1630,10 +2086,13 @@ const styles = StyleSheet.create({
   weekLabel: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#7a8a9a',
+    color: 'rgba(255,255,255,0.7)',
     marginBottom: 10,
     textTransform: 'uppercase',
     letterSpacing: 2,
+    textShadowColor: 'rgba(0,0,0,0.8)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   calendarRow: {
     flexDirection: 'row',
@@ -1641,13 +2100,13 @@ const styles = StyleSheet.create({
   },
   dayContainer: {
     alignItems: 'center',
-    backgroundColor: 'rgba(74, 111, 165, 0.1)',
+    backgroundColor: 'rgba(20, 25, 40, 0.75)',
     paddingVertical: 12,
     paddingHorizontal: 8,
     borderRadius: 10,
     width: (width - 60) / 7,
     borderWidth: 1,
-    borderColor: 'rgba(74, 111, 165, 0.2)',
+    borderColor: 'rgba(255, 255, 255, 0.15)',
   },
   todayContainer: {
     backgroundColor: '#f39c12',
@@ -1660,13 +2119,13 @@ const styles = StyleSheet.create({
   },
   dayName: {
     fontSize: 9,
-    color: '#7a8a9a',
+    color: 'rgba(255,255,255,0.7)',
     fontWeight: 'bold',
     letterSpacing: 1,
   },
   dayNumber: {
     fontSize: 16,
-    color: '#e8f4f8',
+    color: '#ffffff',
     fontWeight: 'bold',
     marginTop: 4,
   },
@@ -1680,7 +2139,7 @@ const styles = StyleSheet.create({
   },
   workoutLabel: {
     fontSize: 8,
-    color: '#7a8a9a',
+    color: 'rgba(255,255,255,0.6)',
     marginTop: 4,
     textAlign: 'center',
   },
@@ -2672,5 +3131,131 @@ const styles = StyleSheet.create({
   dayDetailCloseText: {
     color: '#888',
     fontSize: 14,
+  },
+  // Settings Modal Styles
+  settingsOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  settingsCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 20,
+    width: '100%',
+    maxWidth: 380,
+    maxHeight: '85%',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+  },
+  settingsTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#ffffff',
+    textAlign: 'center',
+    marginBottom: 20,
+    letterSpacing: 1,
+  },
+  settingsSectionTitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#888',
+    textTransform: 'uppercase',
+    letterSpacing: 2,
+    marginTop: 20,
+    marginBottom: 12,
+    paddingLeft: 4,
+  },
+  settingsItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+  },
+  settingsItemLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  settingsItemText: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  settingsItemLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#ffffff',
+  },
+  settingsItemValue: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
+  },
+  settingsItemArrow: {
+    fontSize: 22,
+    color: '#888',
+    fontWeight: '300',
+  },
+  settingsResetBtn: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#f39c12',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(243, 156, 18, 0.15)',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  settingsDangerItem: {
+    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+    borderColor: 'rgba(231, 76, 60, 0.3)',
+    marginTop: 10,
+  },
+  settingsDangerIcon: {
+    fontSize: 20,
+  },
+  settingsAboutIcon: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  settingsDangerLabel: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#e74c3c',
+  },
+  settingsDangerValue: {
+    fontSize: 12,
+    color: '#e74c3c',
+    opacity: 0.7,
+    marginTop: 2,
+  },
+  settingsDangerBtn: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#e74c3c',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: 'rgba(231, 76, 60, 0.2)',
+    borderRadius: 6,
+    overflow: 'hidden',
+  },
+  settingsCloseBtn: {
+    backgroundColor: '#f39c12',
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  settingsCloseBtnText: {
+    color: '#000',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });

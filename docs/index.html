@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATP: Ascent Training Protocol</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: #e8f4f8;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo h1 {
+            font-size: 2.5rem;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+        .logo p {
+            color: #7a8a9a;
+            font-size: 1.1rem;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .card h2 {
+            color: #f39c12;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .card p {
+            color: #a0aab4;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .links a {
+            display: inline-block;
+            background: rgba(243,156,18,0.2);
+            color: #f39c12;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .links a:hover {
+            background: rgba(243,156,18,0.3);
+        }
+        .app-store-badge {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .app-store-badge img {
+            height: 50px;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .feature {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        .feature-title {
+            color: #e8f4f8;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .feature-desc {
+            color: #7a8a9a;
+            font-size: 0.9rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #7a8a9a;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>⛰️ ATP</h1>
+            <p>Ascent Training Protocol</p>
+        </div>
+
+        <div class="card">
+            <h2>AI-Powered Athletic Training</h2>
+            <p>Unlock your potential with personalized training programs built specifically for you using advanced artificial intelligence. Whether you're a middle school athlete just starting out or a seasoned competitor, ATP delivers customized protocols tailored to your sport, position, and goals.</p>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI Coach</div>
+                    <div class="feature-desc">Personalized training plans</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🥗</div>
+                    <div class="feature-title">Nutrition</div>
+                    <div class="feature-desc">Age-appropriate meal plans</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🏆</div>
+                    <div class="feature-title">Compete</div>
+                    <div class="feature-desc">Team leaderboards</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">Track</div>
+                    <div class="feature-desc">Progress & points</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Legal & Support</h2>
+            <div class="links">
+                <a href="privacy.html">📄 Privacy Policy</a>
+                <a href="terms.html">📋 Terms of Service</a>
+                <a href="mailto:support@atptraining.app">✉️ Contact Support</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Our Commitment to Youth Athletes</h2>
+            <p>ATP is designed with the health and well-being of young athletes as our top priority. Our nutrition guidance follows evidence-based principles and will <strong>never</strong> recommend caloric restriction for middle school or high school athletes. We focus on adding nutritious foods, not taking them away.</p>
+            <div class="links">
+                <a href="nutrition-philosophy.html">🥗 Read Our Nutrition Philosophy</a>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 ATP Training. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
