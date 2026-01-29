@@ -123,7 +123,7 @@ If any provision of these Terms is found unenforceable, the remaining provisions
 
 For questions about these Terms, contact us at:
 
-**Email:** support@atptraining.app
+**Email:** atptraining@proton.me
 
 **Developer:** ATP Training
 

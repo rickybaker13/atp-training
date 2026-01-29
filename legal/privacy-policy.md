@@ -53,7 +53,7 @@ You have the right to:
 - Opt out of team features
 - Export your workout data
 
-To exercise these rights, contact us at support@atptraining.app
+To exercise these rights, contact us at atptraining@proton.me
 
 ## Children's Privacy
 
@@ -87,7 +87,7 @@ We may update this Privacy Policy from time to time. We will notify you of any c
 
 If you have questions about this Privacy Policy, please contact us at:
 
-**Email:** support@atptraining.app
+**Email:** atptraining@proton.me
 
 **Developer:** ATP Training
 
