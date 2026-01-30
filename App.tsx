@@ -12,6 +12,7 @@ import {
   StatusBar,
   Linking,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
@@ -410,11 +411,41 @@ export default function App() {
 
   const resetAllData = async () => {
     try {
+      // Clear all AsyncStorage data
       await AsyncStorage.removeItem('joboo_progress');
+      await AsyncStorage.removeItem('mountain_generated_plan');
+      await AsyncStorage.removeItem('mountain_nutrition_plan');
+      await AsyncStorage.removeItem('mountain_openrouter_api_key');
+
+      // Reset all state
       setProgress(defaultProgress);
+      setHasCustomPlan(false);
+      setHasNutritionPlan(false);
+      setUserSports([]);
     } catch (e) {
       console.log('Error resetting data:', e);
     }
+  };
+
+  const confirmResetAllData = () => {
+    Alert.alert(
+      '⚠️ Reset All Data?',
+      'This will delete ALL your data including:\n\n• Training Plan\n• Nutrition Plan\n• Progress & Points\n• Streaks & Milestones\n\nYou will need to purchase new plans ($1.99 each) to regenerate them.\n\nThis cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Reset Everything',
+          style: 'destructive',
+          onPress: () => {
+            resetAllData();
+            setShowSettings(false);
+          },
+        },
+      ]
+    );
   };
 
   const setupNotifications = async () => {
@@ -1620,10 +1651,7 @@ export default function App() {
             {/* Reset All Data */}
             <TouchableOpacity
               style={[styles.settingsItem, styles.settingsDangerItem]}
-              onPress={() => {
-                resetAllData();
-                setShowSettings(false);
-              }}
+              onPress={confirmResetAllData}
             >
               <View style={styles.settingsItemLeft}>
                 <Text style={styles.settingsDangerIcon}>⚠️</Text>
