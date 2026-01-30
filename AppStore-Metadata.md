@@ -84,13 +84,13 @@ New AI training technology! Get a personalized workout protocol in minutes. Join
 © 2026 ATP Training
 
 ## Support URL
-https://atptraining.app/support
+https://rickybaker13.github.io/atp-training/support.html
 
 ## Marketing URL
-https://atptraining.app
+https://rickybaker13.github.io/atp-training/
 
 ## Privacy Policy URL
-https://atptraining.app/privacy
+https://rickybaker13.github.io/atp-training/privacy.html
 
 ---
 
