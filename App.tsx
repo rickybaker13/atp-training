@@ -725,6 +725,10 @@ export default function App() {
   };
 
   const getWorkoutForDay = (dayOfWeek: number): string => {
+    // Return empty if no custom plan yet
+    if (!hasCustomPlan) {
+      return '';
+    }
     const schedule = currentPhase.weeklySchedule.find(s => s.dayOfWeek === dayOfWeek);
     return schedule?.workoutType || 'Rest';
   };
@@ -784,7 +788,7 @@ export default function App() {
                 {dayPoints > 0 && (
                   <Text style={styles.dayPoints}>+{dayPoints}</Text>
                 )}
-                {dayPoints === 0 && (
+                {dayPoints === 0 && workoutType && (
                   <Text style={styles.workoutLabel} numberOfLines={1}>
                     {workoutType === 'OFF' ? '💤' : workoutType.split(' ')[0]}
                   </Text>
@@ -818,6 +822,40 @@ export default function App() {
   );
 
   const renderPhaseInfo = () => {
+    // Don't show phase info if user doesn't have a custom plan
+    if (!hasCustomPlan) {
+      return (
+        <TouchableOpacity
+          style={styles.phaseContainer}
+          onPress={() => {
+            setCoachBotPlanType('training');
+            setShowCoachBot(true);
+          }}
+        >
+          <LinearGradient
+            colors={['#1a1a2e', '#16213e']}
+            style={styles.phaseGradient}
+          >
+            <View style={styles.phaseHeader}>
+              <View style={styles.phaseInfo}>
+                <Text style={styles.phaseName} numberOfLines={1}>Welcome to ATP!</Text>
+                <Text style={styles.phaseWeeks}>
+                  Create your personalized training plan
+                </Text>
+              </View>
+              <View style={styles.startDateButton}>
+                <Text style={styles.startDateValue}>Get Started →</Text>
+              </View>
+            </View>
+            <View style={styles.goalsContainer}>
+              <Text style={styles.goalText}>• AI-powered workout programs tailored to your sport</Text>
+              <Text style={styles.goalText}>• Track progress and earn points</Text>
+            </View>
+          </LinearGradient>
+        </TouchableOpacity>
+      );
+    }
+
     const startDate = progress.programStartDate ? new Date(progress.programStartDate) : null;
     const startDateText = startDate
       ? startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -859,6 +897,29 @@ export default function App() {
   };
 
   const renderTodayWorkout = () => {
+    // Don't show today's workout if user doesn't have a custom plan
+    if (!hasCustomPlan) {
+      return (
+        <TouchableOpacity
+          style={styles.todayWorkoutCard}
+          onPress={() => {
+            setCoachBotPlanType('training');
+            setShowCoachBot(true);
+          }}
+        >
+          <View style={styles.todayHeader}>
+            <Text style={styles.todayTitle}>GET YOUR TRAINING PLAN</Text>
+          </View>
+          <Text style={styles.todayWorkoutName}>
+            Create a personalized AI workout program
+          </Text>
+          <View style={styles.startButton}>
+            <Text style={styles.startButtonText}>CREATE PLAN →</Text>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+
     const today = new Date().getDay();
     const schedule = currentPhase.weeklySchedule.find(s => s.dayOfWeek === today);
     const workout = schedule?.workoutId ? getWorkoutById(schedule.workoutId) : null;
@@ -1921,9 +1982,13 @@ export default function App() {
           {/* Pitch Management */}
           {renderPitchManagement()}
 
-          {/* Quick Actions */}
-          <Text style={styles.sectionTitle}>QUICK SESSIONS</Text>
-          {renderQuickActions()}
+          {/* Quick Actions - only show if user has a custom plan */}
+          {hasCustomPlan && (
+            <>
+              <Text style={styles.sectionTitle}>QUICK SESSIONS</Text>
+              {renderQuickActions()}
+            </>
+          )}
 
           {/* Pitch Count Rules - Only for baseball/softball players */}
           {isBaseballPlayer && (
