@@ -784,7 +784,7 @@ export default function App() {
                   {date.getDate()}
                 </Text>
                 {completed && <Text style={styles.checkmark}>✓</Text>}
-                {isPitchingDay(date) && <Text style={styles.pitchIndicator}>⚾</Text>}
+                {isBaseballPlayer && isPitchingDay(date) && <Text style={styles.pitchIndicator}>⚾</Text>}
                 {dayPoints > 0 && (
                   <Text style={styles.dayPoints}>+{dayPoints}</Text>
                 )}
@@ -1492,7 +1492,8 @@ export default function App() {
     if (!selectedDayDate) return null;
 
     const dayOfWeek = selectedDayDate.getDay();
-    const schedule = currentPhase.weeklySchedule.find(s => s.dayOfWeek === dayOfWeek);
+    // Only get schedule/workout if user has a custom plan
+    const schedule = hasCustomPlan ? currentPhase.weeklySchedule.find(s => s.dayOfWeek === dayOfWeek) : null;
     const workout = schedule?.workoutId ? getWorkoutById(schedule.workoutId) : null;
     const dayPoints = getDailyPointsForDate(selectedDayDate);
     const exercisesCompleted = getCompletedExercisesForDate(selectedDayDate);
@@ -1527,16 +1528,25 @@ export default function App() {
               </View>
             </View>
 
-            {/* Workout Info */}
-            <View style={styles.dayDetailWorkout}>
-              <Text style={styles.dayDetailWorkoutLabel}>Scheduled:</Text>
-              <Text style={styles.dayDetailWorkoutName}>
-                {schedule?.workoutType || 'Rest Day'}
-              </Text>
-            </View>
+            {/* Workout Info - only show if user has a custom plan */}
+            {hasCustomPlan ? (
+              <View style={styles.dayDetailWorkout}>
+                <Text style={styles.dayDetailWorkoutLabel}>Scheduled:</Text>
+                <Text style={styles.dayDetailWorkoutName}>
+                  {schedule?.workoutType || 'Rest Day'}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.dayDetailWorkout}>
+                <Text style={styles.dayDetailWorkoutLabel}>No training plan yet</Text>
+                <Text style={styles.dayDetailWorkoutName}>
+                  Create a plan to see scheduled workouts
+                </Text>
+              </View>
+            )}
 
-            {/* Pitching Badge */}
-            {isPitching && (
+            {/* Pitching Badge - only for baseball players */}
+            {isBaseballPlayer && isPitching && (
               <View style={styles.dayDetailPitchBadge}>
                 <Text style={styles.dayDetailPitchText}>⚾ Pitching Day</Text>
               </View>
@@ -1544,7 +1554,7 @@ export default function App() {
 
             {/* Action Buttons */}
             <View style={styles.dayDetailActions}>
-              {workout && (
+              {hasCustomPlan && workout && (
                 <TouchableOpacity
                   style={styles.dayDetailButton}
                   onPress={() => {
@@ -1559,19 +1569,22 @@ export default function App() {
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity
-                style={[
-                  styles.dayDetailPitchButton,
-                  isPitching && styles.dayDetailPitchButtonActive
-                ]}
-                onPress={() => {
-                  togglePitchingDay(selectedDayDate);
-                }}
-              >
-                <Text style={styles.dayDetailPitchButtonText}>
-                  {isPitching ? '✓ Pitching Day' : '⚾ Mark as Pitching'}
-                </Text>
-              </TouchableOpacity>
+              {/* Mark as Pitching - only for baseball/softball players */}
+              {isBaseballPlayer && (
+                <TouchableOpacity
+                  style={[
+                    styles.dayDetailPitchButton,
+                    isPitching && styles.dayDetailPitchButtonActive
+                  ]}
+                  onPress={() => {
+                    togglePitchingDay(selectedDayDate);
+                  }}
+                >
+                  <Text style={styles.dayDetailPitchButtonText}>
+                    {isPitching ? '✓ Pitching Day' : '⚾ Mark as Pitching'}
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <TouchableOpacity
