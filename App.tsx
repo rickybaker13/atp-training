@@ -22,9 +22,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { CoachBot, TeamManager, Leaderboard, FeatureButtons } from './src/components';
 import { supabaseService } from './src/services';
 import { Team, GeneratedTrainingPlan } from './src/types';
+import { theme } from './src/theme';
 
 // Custom Icon Components - Clean geometric style using Views
-const IconPeak = ({ size = 28, color = '#f39c12' }: { size?: number; color?: string }) => (
+const IconPeak = ({ size = 28, color = theme.colors.primary }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
     <View style={{
       width: 0,
@@ -52,7 +53,7 @@ const IconPeak = ({ size = 28, color = '#f39c12' }: { size?: number; color?: str
   </View>
 );
 
-const IconFlame = ({ size = 28, color = '#e74c3c' }: { size?: number; color?: string }) => (
+const IconFlame = ({ size = 28, color = theme.colors.tertiary }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
     <Text style={{ fontSize: size * 0.85, color: color }}>△</Text>
     <View style={{
@@ -67,7 +68,7 @@ const IconFlame = ({ size = 28, color = '#e74c3c' }: { size?: number; color?: st
   </View>
 );
 
-const IconDumbbell = ({ size = 28, color = '#4a6fa5' }: { size?: number; color?: string }) => (
+const IconDumbbell = ({ size = 28, color = theme.colors.secondary }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
     <View style={{ width: size * 0.2, height: size * 0.5, backgroundColor: color, borderRadius: 2 }} />
     <View style={{ width: size * 0.4, height: size * 0.15, backgroundColor: color }} />
@@ -98,7 +99,7 @@ const IconBaseball = ({ size = 28, color = '#e8f4f8' }: { size?: number; color?:
   </View>
 );
 
-const IconBolt = ({ size = 28, color = '#f39c12' }: { size?: number; color?: string }) => (
+const IconBolt = ({ size = 28, color = theme.colors.primary }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, justifyContent: 'center', alignItems: 'center' }}>
     <Text style={{ fontSize: size * 0.9, color: color, fontWeight: '900' }}>⚡</Text>
   </View>
@@ -118,7 +119,7 @@ const IconCalendar = ({ size = 28, color = '#4a6fa5' }: { size?: number; color?:
   </View>
 );
 
-const IconStats = ({ size = 28, color = '#2ecc71' }: { size?: number; color?: string }) => (
+const IconStats = ({ size = 28, color = theme.colors.success }: { size?: number; color?: string }) => (
   <View style={{ width: size, height: size, flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', gap: 2 }}>
     <View style={{ width: size * 0.2, height: size * 0.35, backgroundColor: color, opacity: 0.5 }} />
     <View style={{ width: size * 0.2, height: size * 0.55, backgroundColor: color, opacity: 0.7 }} />
