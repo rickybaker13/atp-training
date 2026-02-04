@@ -2,6 +2,7 @@
 // Handles sharing workouts, points, and leaderboard rankings to social media
 
 import React from 'react';
+import { colors, typography, spacing } from '../theme';
 import {
   View,
   Text,
@@ -493,11 +494,11 @@ const styles = StyleSheet.create({
 
   // Share card styles
   shareCard: {
-    backgroundColor: 'rgba(46,204,113,0.1)',
+    backgroundColor: 'rgba(57, 255, 20,0.1)',
     borderRadius: 20,
     padding: 24,
     borderWidth: 1,
-    borderColor: 'rgba(46,204,113,0.3)',
+    borderColor: 'rgba(57, 255, 20,0.3)',
   },
   shareCardHeader: {
     alignItems: 'center',
@@ -508,7 +509,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   shareCardTitle: {
-    color: '#2ecc71',
+    color: 'colors.success',
     fontSize: 24,
     fontWeight: '700',
   },

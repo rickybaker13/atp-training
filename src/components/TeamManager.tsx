@@ -2,6 +2,7 @@
 // Handles team creation, joining, and management
 
 import React, { useState, useEffect } from 'react';
+import { colors, typography, spacing } from '../theme';
 import {
   View,
   Text,
@@ -326,7 +327,7 @@ export const TeamManager: React.FC<TeamManagerProps> = ({
           style={styles.gradient}
         >
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#f39c12" />
+            <ActivityIndicator size="large" color="colors.primary" />
             <Text style={styles.loadingText}>Loading team...</Text>
           </View>
         </LinearGradient>
@@ -387,7 +388,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   headerTitle: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: 2,
@@ -415,7 +416,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(243,156,18,0.2)',
+    backgroundColor: 'rgba(0, 217, 255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   primaryButton: {
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
@@ -477,7 +478,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   backButtonText: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 15,
     fontWeight: '600',
   },
@@ -499,7 +500,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   errorText: {
-    color: '#e74c3c',
+    color: 'colors.tertiary',
     fontSize: 13,
     marginBottom: 16,
   },
@@ -515,7 +516,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'rgba(243,156,18,0.2)',
+    backgroundColor: 'rgba(0, 217, 255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 12,
@@ -549,20 +550,20 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   inviteCode: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 28,
     fontWeight: '800',
     letterSpacing: 6,
     marginBottom: 16,
   },
   shareButton: {
-    backgroundColor: 'rgba(243,156,18,0.2)',
+    backgroundColor: 'rgba(0, 217, 255,0.2)',
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 20,
   },
   shareButtonText: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 14,
     fontWeight: '600',
   },
@@ -585,7 +586,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
@@ -604,7 +605,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   adminBadge: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 11,
     fontWeight: '600',
     marginTop: 2,
@@ -625,7 +626,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(231,76,60,0.3)',
   },
   dangerButtonText: {
-    color: '#e74c3c',
+    color: 'colors.tertiary',
     fontSize: 15,
     fontWeight: '600',
   },

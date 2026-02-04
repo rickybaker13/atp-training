@@ -2,6 +2,7 @@
 // Conversational UI for gathering user information and generating plans
 
 import React, { useState, useRef, useEffect } from 'react';
+import { colors, typography, spacing } from '../theme';
 import {
   View,
   Text,
@@ -453,7 +454,7 @@ export const CoachBot: React.FC<CoachBotProps> = ({
             {/* Generating indicator */}
             {isGenerating && (
               <View style={styles.generatingContainer}>
-                <ActivityIndicator size="large" color="#f39c12" />
+                <ActivityIndicator size="large" color="colors.primary" />
                 <Text style={styles.generatingText}>
                   Building your {planType === 'training' ? 'program' : 'meal plan'}...
                 </Text>
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: 2,
@@ -621,7 +622,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: '100%',
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     borderRadius: 2,
   },
   chatContainer: {
@@ -649,7 +650,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 8,
@@ -667,7 +668,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   userMessageContent: {
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     borderBottomRightRadius: 4,
     marginLeft: 'auto',
   },
@@ -719,8 +720,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   optionSelected: {
-    backgroundColor: 'rgba(243,156,18,0.2)',
-    borderColor: '#f39c12',
+    backgroundColor: 'rgba(0, 217, 255,0.2)',
+    borderColor: 'colors.primary',
   },
   optionIcon: {
     fontSize: 16,
@@ -738,7 +739,7 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -779,13 +780,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.2)',
   },
   submitButton: {
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
     padding: 14,
     borderRadius: 12,
     alignItems: 'center',
   },
   submitButtonDisabled: {
-    backgroundColor: 'rgba(243,156,18,0.4)',
+    backgroundColor: 'rgba(0, 217, 255,0.4)',
   },
   submitButtonText: {
     color: '#000',
@@ -793,7 +794,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   errorText: {
-    color: '#e74c3c',
+    color: 'colors.tertiary',
     fontSize: 13,
     textAlign: 'center',
   },

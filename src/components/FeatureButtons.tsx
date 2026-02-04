@@ -1,7 +1,8 @@
 // Feature Buttons Component
 // Quick access buttons for Team, Leaderboard, Training, and Nutrition features
+// Elite Momentum Design System - Gen-Z Aesthetic
 
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +10,13 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, typography, spacing } from '../theme';
 
 interface FeatureButtonsProps {
   onTeamPress: () => void;
@@ -19,6 +27,144 @@ interface FeatureButtonsProps {
   hasCustomPlan: boolean;
   hasNutritionPlan: boolean;
 }
+
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
+const FeatureButtonCard: React.FC<{
+  icon: string;
+  label: string;
+  hint: string;
+  onPress: () => void;
+  isActive?: boolean;
+  disabled?: boolean;
+  variant?: 'team' | 'training' | 'nutrition' | 'leaderboard';
+}> = ({
+  icon,
+  label,
+  hint,
+  onPress,
+  isActive = false,
+  disabled = false,
+  variant = 'team',
+}) => {
+  const scale = useSharedValue(1);
+
+  const handlePressIn = () => {
+    scale.value = withSpring(0.95);
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1);
+  };
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // Color configs per variant
+  const getVariantColors = () => {
+    switch (variant) {
+      case 'team':
+        return {
+          icon: isActive ? colors.primary : colors.text.muted,
+          gradStart: 'rgba(0, 217, 255, 0.1)',
+          gradEnd: 'rgba(0, 217, 255, 0.05)',
+          border: isActive ? colors.primary : 'rgba(0, 217, 255, 0.3)',
+        };
+      case 'leaderboard':
+        return {
+          icon: isActive ? colors.secondary : colors.text.muted,
+          gradStart: 'rgba(255, 0, 255, 0.1)',
+          gradEnd: 'rgba(255, 0, 255, 0.05)',
+          border: isActive ? colors.secondary : 'rgba(255, 0, 255, 0.3)',
+        };
+      case 'training':
+        return {
+          icon: colors.success,
+          gradStart: 'rgba(57, 255, 20, 0.08)',
+          gradEnd: 'rgba(57, 255, 20, 0.02)',
+          border: 'rgba(57, 255, 20, 0.3)',
+        };
+      case 'nutrition':
+        return {
+          icon: colors.secondary,
+          gradStart: 'rgba(255, 0, 255, 0.08)',
+          gradEnd: 'rgba(255, 0, 255, 0.02)',
+          border: 'rgba(255, 0, 255, 0.3)',
+        };
+      default:
+        return {
+          icon: colors.primary,
+          gradStart: 'rgba(0, 217, 255, 0.1)',
+          gradEnd: 'rgba(0, 217, 255, 0.05)',
+          border: 'rgba(0, 217, 255, 0.3)',
+        };
+    }
+  };
+
+  const variantColors = getVariantColors();
+
+  return (
+    <AnimatedTouchable
+      style={[animatedStyle]}
+      onPress={disabled ? undefined : onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={disabled}
+      activeOpacity={0.8}
+    >
+      <LinearGradient
+        colors={[variantColors.gradStart, variantColors.gradEnd]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={[
+          styles.featureButton,
+          {
+            borderColor: variantColors.border,
+            opacity: disabled ? 0.5 : 1,
+          },
+        ]}
+      >
+        {/* Icon Circle with glow */}
+        <View style={styles.iconContainer}>
+          <View
+            style={[
+              styles.iconGlow,
+              {
+                borderColor: variantColors.icon,
+              },
+            ]}
+          />
+          <Ionicons
+            name={icon}
+            size={24}
+            color={variantColors.icon}
+            style={styles.icon}
+          />
+        </View>
+
+        {/* Label and Hint */}
+        <Text
+          style={[
+            styles.buttonLabel,
+            typography.buttonSmall,
+            { color: colors.text.primary },
+          ]}
+        >
+          {label}
+        </Text>
+        <Text
+          style={[
+            styles.buttonHint,
+            { color: colors.text.secondary },
+          ]}
+        >
+          {hint}
+        </Text>
+      </LinearGradient>
+    </AnimatedTouchable>
+  );
+};
 
 export const FeatureButtons: React.FC<FeatureButtonsProps> = ({
   onTeamPress,
@@ -31,74 +177,57 @@ export const FeatureButtons: React.FC<FeatureButtonsProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>COMPETE & CUSTOMIZE</Text>
+      <Text style={[styles.sectionTitle, typography.caption]}>
+        COMPETE & CUSTOMIZE
+      </Text>
 
       {/* Top Row - Team and Leaderboard */}
       <View style={styles.buttonRow}>
-        {/* Team Button */}
-        <TouchableOpacity style={styles.featureButton} onPress={onTeamPress}>
-          <View style={[styles.iconCircle, hasTeam && styles.iconCircleActive]}>
-            <Ionicons
-              name={hasTeam ? "people" : "people-outline"}
-              size={24}
-              color={hasTeam ? "#f39c12" : "#888"}
-            />
-          </View>
-          <Text style={styles.buttonLabel}>
-            {hasTeam ? 'My Team' : 'Join Team'}
-          </Text>
-          {!hasTeam && <Text style={styles.buttonHint}>Compete!</Text>}
-        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <FeatureButtonCard
+            icon={hasTeam ? "people" : "people-outline"}
+            label={hasTeam ? 'My Team' : 'Join Team'}
+            hint={hasTeam ? 'Your squad' : 'Compete!'}
+            onPress={onTeamPress}
+            isActive={hasTeam}
+            variant="team"
+          />
+        </View>
 
-        {/* Leaderboard Button */}
-        <TouchableOpacity
-          style={[styles.featureButton, !hasTeam && styles.buttonDisabled]}
-          onPress={onLeaderboardPress}
-          disabled={!hasTeam}
-        >
-          <View style={[styles.iconCircle, hasTeam && styles.iconCircleActive]}>
-            <Ionicons
-              name="trophy-outline"
-              size={24}
-              color={hasTeam ? "#f39c12" : "#666"}
-            />
-          </View>
-          <Text style={styles.buttonLabel}>Leaderboard</Text>
-          {!hasTeam && <Text style={styles.buttonHint}>Join team first</Text>}
-        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <FeatureButtonCard
+            icon="trophy-outline"
+            label="Leaderboard"
+            hint={hasTeam ? 'Rankings' : 'Join team'}
+            onPress={onLeaderboardPress}
+            disabled={!hasTeam}
+            isActive={hasTeam}
+            variant="leaderboard"
+          />
+        </View>
       </View>
 
       {/* Bottom Row - Training and Nutrition Plans */}
-      <View style={[styles.buttonRow, { marginTop: 10 }]}>
-        {/* Training Plan Button */}
-        <TouchableOpacity style={styles.featureButton} onPress={onTrainingPlanPress}>
-          <View style={[styles.iconCircle, styles.iconCircleTraining]}>
-            <Ionicons
-              name="barbell-outline"
-              size={24}
-              color="#2ecc71"
-            />
-          </View>
-          <Text style={styles.buttonLabel}>
-            {hasCustomPlan ? 'New Plan' : 'Training Plan'}
-          </Text>
-          <Text style={styles.buttonHint}>AI-Powered</Text>
-        </TouchableOpacity>
+      <View style={[styles.buttonRow, { marginTop: spacing.md }]}>
+        <View style={{ flex: 1 }}>
+          <FeatureButtonCard
+            icon="barbell-outline"
+            label={hasCustomPlan ? 'New Plan' : 'Training'}
+            hint="AI-Powered"
+            onPress={onTrainingPlanPress}
+            variant="training"
+          />
+        </View>
 
-        {/* Nutrition Plan Button */}
-        <TouchableOpacity style={styles.featureButton} onPress={onNutritionPlanPress}>
-          <View style={[styles.iconCircle, styles.iconCircleNutrition]}>
-            <Ionicons
-              name="nutrition-outline"
-              size={24}
-              color="#9b59b6"
-            />
-          </View>
-          <Text style={styles.buttonLabel}>
-            {hasNutritionPlan ? 'Update Diet' : 'Nutrition Plan'}
-          </Text>
-          <Text style={styles.buttonHint}>AI-Powered</Text>
-        </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+          <FeatureButtonCard
+            icon="nutrition-outline"
+            label={hasNutritionPlan ? 'Update Diet' : 'Nutrition'}
+            hint="AI-Powered"
+            onPress={onNutritionPlanPress}
+            variant="nutrition"
+          />
+        </View>
       </View>
     </View>
   );
@@ -106,64 +235,55 @@ export const FeatureButtons: React.FC<FeatureButtonsProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
   },
   sectionTitle: {
-    color: 'rgba(255,255,255,0.7)',
+    color: colors.text.secondary,
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 2,
-    marginBottom: 12,
-    paddingLeft: 4,
-    textShadowColor: 'rgba(0,0,0,0.8)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    marginBottom: spacing.md,
+    paddingLeft: spacing.sm,
   },
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: spacing.md,
   },
   featureButton: {
-    flex: 1,
-    backgroundColor: 'rgba(20,20,30,0.75)',
     borderRadius: 16,
-    padding: 16,
+    padding: spacing.lg,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderWidth: 1.5,
+    minHeight: 140,
+    justifyContent: 'flex-start',
   },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  iconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+  iconContainer: {
+    position: 'relative',
+    width: 56,
+    height: 56,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.md,
   },
-  iconCircleActive: {
-    backgroundColor: 'rgba(243,156,18,0.3)',
+  iconGlow: {
+    position: 'absolute',
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 1.5,
+    opacity: 0.4,
   },
-  iconCircleTraining: {
-    backgroundColor: 'rgba(46,204,113,0.3)',
-  },
-  iconCircleNutrition: {
-    backgroundColor: 'rgba(155,89,182,0.3)',
+  icon: {
+    zIndex: 1,
   },
   buttonLabel: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 2,
+    marginBottom: spacing.xs,
   },
   buttonHint: {
-    color: 'rgba(255,255,255,0.6)',
     fontSize: 11,
     textAlign: 'center',
   },

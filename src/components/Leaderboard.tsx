@@ -2,6 +2,7 @@
 // Displays team and league rankings
 
 import React, { useState, useEffect } from 'react';
+import { colors, typography, spacing } from '../theme';
 import {
   View,
   Text,
@@ -246,7 +247,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         {/* Content */}
         {isLoading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#f39c12" />
+            <ActivityIndicator size="large" color="colors.primary" />
             <Text style={styles.loadingText}>Loading rankings...</Text>
           </View>
         ) : !currentTeam ? (
@@ -262,7 +263,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
               <RefreshControl
                 refreshing={isRefreshing}
                 onRefresh={handleRefresh}
-                tintColor="#f39c12"
+                tintColor="colors.primary"
               />
             }
           >
@@ -369,7 +370,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 18,
     fontWeight: '800',
     letterSpacing: 2,
@@ -393,7 +394,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   filterButtonActive: {
-    backgroundColor: 'rgba(243,156,18,0.2)',
+    backgroundColor: 'rgba(0, 217, 255,0.2)',
   },
   filterText: {
     color: '#888',
@@ -401,7 +402,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   filterTextActive: {
-    color: '#f39c12',
+    color: 'colors.primary',
   },
   loadingContainer: {
     flex: 1,
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
   },
   podiumAvatarText: {
     color: '#fff',
@@ -497,7 +498,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   podiumPointsFirst: {
-    color: '#f39c12',
+    color: 'colors.primary',
     fontSize: 13,
   },
   podiumBar: {
@@ -510,7 +511,7 @@ const styles = StyleSheet.create({
   },
   podiumBarFirst: {
     height: 80,
-    backgroundColor: 'rgba(243,156,18,0.3)',
+    backgroundColor: 'rgba(0, 217, 255,0.3)',
   },
   podiumBarSecond: {
     height: 60,
@@ -542,9 +543,9 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   currentUserRow: {
-    backgroundColor: 'rgba(243,156,18,0.1)',
+    backgroundColor: 'rgba(0, 217, 255,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(243,156,18,0.3)',
+    borderColor: 'rgba(0, 217, 255,0.3)',
   },
   topThreeRow: {
     backgroundColor: 'rgba(255,255,255,0.05)',
@@ -576,7 +577,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   currentUserAvatar: {
-    backgroundColor: '#f39c12',
+    backgroundColor: 'colors.primary',
   },
   avatarText: {
     color: '#fff',
@@ -593,7 +594,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   currentUserName: {
-    color: '#f39c12',
+    color: 'colors.primary',
   },
   statsRow: {
     flexDirection: 'row',
@@ -612,7 +613,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   topPointsValue: {
-    color: '#f39c12',
+    color: 'colors.primary',
   },
   pointsLabel: {
     color: '#666',
